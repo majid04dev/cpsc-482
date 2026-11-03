@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Vote cards v2</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;background:#F6F1E7;overflow:hidden}
+.row{display:grid;grid-template-columns:repeat(5,216px);gap:10px;height:100%;padding:2px 0 2px}
+.card{position:relative;border:1.5px solid #DDD4C3;border-radius:12px;background:#F6F1E7;overflow:hidden}
+.card img{position:absolute;left:50%;top:34px;width:88px;height:55px;margin-left:-44px;display:block}
+.branch{position:absolute;left:50%;top:84px;width:120px;height:8px;margin-left:-60px}
+.note{position:absolute;top:36px;font:700 13px Georgia,serif;opacity:0;animation:note 2.6s ease-in-out infinite}
+.n1{left:50%;margin-left:30px}
+.n2{left:50%;margin-left:44px;animation-delay:1.3s;font-size:11px}
+@keyframes note{0%{opacity:0;transform:translateY(6px)}30%{opacity:.9}100%{opacity:0;transform:translateY(-10px)}}
+</style></head><body>
+<div class="row">
+<div class="card" style="--c:#4F64A8"><span class="note n1" style="color:#4F64A8">&#9834;</span><span class="note n2" style="color:#4F64A8">&#9835;</span><img src="vote_gray_jay.gif" alt=""><svg class="branch" viewBox="0 0 120 8"><path d="M2 5 Q60 1 118 5" stroke="#9C7A52" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg></div>
+<div class="card"><span class="note n1" style="color:#D9733B">&#9834;</span><span class="note n2" style="color:#D9733B">&#9835;</span><img src="vote_chickadee.gif" alt=""><svg class="branch" viewBox="0 0 120 8"><path d="M2 5 Q60 1 118 5" stroke="#9C7A52" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg></div>
+<div class="card"><span class="note n1" style="color:#7B5A3A">&#9834;</span><span class="note n2" style="color:#7B5A3A">&#9835;</span><img src="vote_canada_goose.gif" alt=""><svg class="branch" viewBox="0 0 120 8"><path d="M2 5 Q60 1 118 5" stroke="#9C7A52" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg></div>
+<div class="card"><span class="note n1" style="color:#2E7D6B">&#9834;</span><span class="note n2" style="color:#2E7D6B">&#9835;</span><img src="vote_common_loon.gif" alt=""><svg class="branch" viewBox="0 0 120 8"><path d="M2 5 Q60 1 118 5" stroke="#9C7A52" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg></div>
+<div class="card"><span class="note n1" style="color:#4FAFD8">&#9834;</span><span class="note n2" style="color:#4FAFD8">&#9835;</span><img src="vote_snowy_owl.gif" alt=""><svg class="branch" viewBox="0 0 120 8"><path d="M2 5 Q60 1 118 5" stroke="#9C7A52" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg></div>
+</div></body></html>
