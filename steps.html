@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Step cards</title>
+<link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;background:#F6F1E7;font-family:"Work Sans",Georgia,sans-serif;color:#24211C;overflow:hidden}
+.row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;height:100%;padding:2px 2px 5px}
+.card{display:grid;grid-template-columns:72px 1fr;align-items:center;gap:8px;border:1.5px solid #DDD4C3;border-radius:10px;padding:0 12px 0 8px;background:#F6F1E7;min-width:0}
+.card img{width:72px;height:45px;display:block}
+.card b{display:block;font:600 14px/1.2 "Work Sans",Arial,sans-serif}
+.card small{display:block;font-size:11px;line-height:1.2;color:#857D70;margin-top:2px}
+.card.on{border-color:#24211C;box-shadow:0 3px 0 #24211C}
+</style></head><body>
+<div class="row" id="r"></div>
+<script>
+const S=[["1. Seen","Spotted, nothing more (X)","step1_seen_animated.gif"],
+["2. Possible","In nesting habitat, singing (H)","step2_possible_animated.gif"],
+["3. Probable","Pair, territory, courtship","step3_probable_animated.gif"],
+["4. Confirmed","Nest, eggs, young, fledglings","step4_confirmed_animated.gif"]];
+const q=new URLSearchParams(location.search);const sel=q.has("sel")?+q.get("sel"):3;
+document.getElementById("r").innerHTML=S.map((s,i)=>`<div class="card${i===sel?" on":""}"><img src="${s[2]}" alt=""><div><b>${s[0]}</b><small>${s[1]}</small></div></div>`).join("");
+</script></body></html>
