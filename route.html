@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Journey route</title>
+<link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0}
+html,body{width:100%;height:100%;background:#F6F1E7;overflow:hidden}
+svg{display:block}
+text{font-family:"Work Sans",Georgia,Arial,sans-serif}
+@keyframes flap{0%,100%{transform:rotate(0deg)}50%{transform:rotate(-24deg)}}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+.wing{animation:flap .45s ease-in-out infinite;transform-box:fill-box;transform-origin:25% 70%}
+.idle{animation:bob 1.6s ease-in-out infinite}
+</style></head><body>
+<svg id="s" width="1200" height="64" viewBox="0 0 1200 64"></svg>
+<script>
+// usage: route.html?stop=0..5   (0 Breeding, 1 Canada, 2 Alberta, 3 Your city, 4 Seasons, 5 Home)   add &still=1 for no animation
+const q=new URLSearchParams(location.search);
+const stop=Math.max(0,Math.min(5,+(q.get("stop")||0)));const still=q.has("still");
+const S=["Breeding","Canada","Alberta","Your city","Seasons","Home"];
+const NS="http://www.w3.org/2000/svg",x=i=>80+i*208,s=document.getElementById("s");
+const el=(t,a,p)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);(p||s).appendChild(e);return e};
+const BIRD="M-16 4 C-16 -5 -9 -11 -1 -11 C2 -16 9 -16 11 -11 L17 -9 L11 -7 C12 1 7 8 -2 9 L-12 14 L-10 8 C-14 8 -16 6 -16 4 Z";
+const WING="M-16 2 C-10 -14 4 -20 12 -12 C2 -8 -6 -2 -16 2Z";
+const P=[],cum=[0];
+for(let i=0;i<5;i++){const p=el("path",{d:`M${x(i)} 42 Q${(x(i)+x(i+1))/2} ${i%2?50:34} ${x(i+1)} 42`,fill:"none",stroke:"#BDB4A3","stroke-dasharray":"3 5","stroke-width":2});P.push(p);cum.push(cum[i]+p.getTotalLength())}
+function at(len){len=Math.max(0,Math.min(cum[5]-0.01,len));let k=0;while(k<4&&len>cum[k+1])k++;const p=P[k],l=len-cum[k],a=p.getPointAtLength(l),b=p.getPointAtLength(Math.min(l+2,p.getTotalLength()));return{x:a.x,y:a.y,ang:Math.atan2(b.y-a.y,b.x-a.x)*180/Math.PI}}
+S.forEach((n,i)=>{const on=i===stop,done=i<=stop;
+ el("circle",{cx:x(i),cy:42,r:on?7:5,fill:done?"#24211C":"#F6F1E7",stroke:"#24211C","stroke-width":2});
+ const t=el("text",{x:x(i),y:24,"text-anchor":"middle","font-size":13,"font-weight":on?700:500,fill:done?"#24211C":"#857D70"});
+ t.textContent=on?(i<5?`● Stop ${i+1} · ${n}`:`● ${n}`):n});
+const rest=i=>i<5?cum[i]+70:cum[5]-40;
+const bird=el("g",{});
+bird.innerHTML=`<g class="idle"><g transform="scale(.8)"><path d="${BIRD}" fill="#4F64A8"/><path class="wing" d="${WING}" fill="#4F64A8" opacity=".7"/><circle cx="6" cy="-10" r="1.6" fill="#F6F1E7"/></g></g>`;
+function place(len){const p=at(len);bird.setAttribute("transform",`translate(${p.x},${p.y-6}) rotate(${p.ang*.8})`)}
+const from=stop===0?0:rest(stop-1),to=rest(stop);
+if(still){place(to)}else{const D=2200,t0=performance.now();
+ const ease=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;
+ (function f(n){const t=Math.min(1,(n-t0)/D);place(from+(to-from)*ease(t));if(t<1)requestAnimationFrame(f)})(t0);}
+</script></body></html>
