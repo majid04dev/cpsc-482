@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>City cards</title>
+<style>
+:root{--paper:#F6F1E7;--ink:#24211C;--muted:#857D70;--line:#DDD4C3}
+*{box-sizing:border-box;margin:0}
+html,body{background:var(--paper);font-family:"Work Sans","Helvetica Neue",Arial,sans-serif;color:var(--ink)}
+.scenes{display:grid;grid-template-columns:1fr;gap:8px}
+.scene{display:grid;grid-template-columns:110px 1fr;gap:12px;align-items:center;background:rgba(255,255,255,.53);border:1.5px solid var(--line);border-radius:12px;padding:6px 12px;height:74px}
+.scene svg{width:110px;height:62px;overflow:visible}
+.scene b{font:600 15px "Work Sans","Helvetica Neue",Arial,sans-serif}
+.scene .s1{font-size:13.5px;margin-top:1px}
+.scene .s2{font-size:12px;color:var(--muted);margin-top:1px}
+.flying{animation:fly 3.2s linear infinite,flyo 3.2s linear infinite}
+@keyframes fly{0%{transform:translate(-40px,6px)}50%{transform:translate(10px,-6px)}100%{transform:translate(60px,4px)}}
+@keyframes flyo{0%,100%{opacity:0}15%,80%{opacity:1}}
+.bob{animation:bobb 1.6s ease-in-out infinite}
+@keyframes bobb{50%{transform:translateY(-3px)}}
+</style></head>
+<body>
+<div class="scenes" id="scenes"></div>
+<script>
+const BIRDS=[["Gray Jay","#4F64A8"],["Chickadee","#D9733B"],["Canada Goose","#7B5A3A"],["Common Loon","#2E7D6B"],["Snowy Owl","#4FAFD8"]];
+const D={"Calgary": {"Gray Jay": [64, 13], "Chickadee": [496, 41], "Canada Goose": [623, 172], "Common Loon": [81, 4], "Snowy Owl": [7, 0]}, "Edmonton": {"Gray Jay": [11, 2], "Chickadee": [356, 85], "Canada Goose": [245, 73], "Common Loon": [77, 16], "Snowy Owl": [13, 0]}, "Red Deer": {"Gray Jay": [6, 0], "Chickadee": [238, 71], "Canada Goose": [338, 131], "Common Loon": [67, 4], "Snowy Owl": [8, 0]}, "Lethbridge": {"Gray Jay": [0, 0], "Chickadee": [57, 6], "Canada Goose": [103, 45], "Common Loon": [19, 0], "Snowy Owl": [5, 0]}, "Medicine Hat": {"Gray Jay": [0, 0], "Chickadee": [48, 5], "Canada Goose": [94, 38], "Common Loon": [15, 0], "Snowy Owl": [2, 0]}, "Banff / Canmore": {"Gray Jay": [212, 23], "Chickadee": [238, 9], "Canada Goose": [161, 15], "Common Loon": [74, 12], "Snowy Owl": [1, 0]}, "Jasper": {"Gray Jay": [66, 27], "Chickadee": [45, 10], "Canada Goose": [59, 30], "Common Loon": [51, 14], "Snowy Owl": [1, 0]}, "Grande Prairie": {"Gray Jay": [58, 16], "Chickadee": [139, 36], "Canada Goose": [104, 33], "Common Loon": [22, 1], "Snowy Owl": [4, 0]}, "Fort McMurray": {"Gray Jay": [81, 30], "Chickadee": [96, 9], "Canada Goose": [51, 4], "Common Loon": [50, 10], "Snowy Owl": [0, 0]}};
+const BIRD="M-16 4 C-16 -5 -9 -11 -1 -11 C2 -16 9 -16 11 -11 L17 -9 L11 -7 C12 1 7 8 -2 9 L-12 14 L-10 8 C-14 8 -16 6 -16 4 Z";
+const WING="M-16 2 C-10 -14 4 -20 12 -12 C2 -8 -6 -2 -16 2Z";
+const birdSVG=(c,s=1,x=0,y=0,flip=false)=>`<g transform="translate(${x},${y}) scale(${flip?-s:s},${s})"><path d="${BIRD}" fill="${c}"/><circle cx="6" cy="-10" r="1.6" fill="#F6F1E7"/></g>`;
+const flyerSVG=(c,s=1)=>`<g transform="scale(${s})"><path d="${BIRD}" fill="${c}"/><path d="${WING}" fill="${c}" opacity=".75"/><circle cx="6" cy="-10" r="1.6" fill="#F6F1E7"/></g>`;
+function scene(level,c,w=110,h=62){
+  const cx=w/2,cy=h/2+4;let g="";
+  if(level<0)g=`<ellipse cx="0" cy="12" rx="34" ry="10" fill="none" stroke="#BDB4A3" stroke-dasharray="4 4"/><text y="16" text-anchor="middle" font-size="10" fill="#857D70" font-family="Work Sans,Arial">no record</text>`;
+  if(level===0)g=`<g class="flying">${flyerSVG(c,1.05)}</g>`;
+  if(level===3)g=`<path d="M-34 6 Q0 36 34 6 Z" fill="#C9B79A"/><path d="M-34 6 Q0 26 34 6" fill="none" stroke="#A88F6B" stroke-width="2"/>${[-12,0,12].map(x=>`<ellipse cx="${x}" cy="8" rx="6" ry="7.5" fill="${c}" opacity=".9"/>`).join("")}<g class="bob">${birdSVG(c,.85,20,-10)}</g>`;
+  return `<svg viewBox="0 0 ${w} ${h}"><g transform="translate(${cx},${cy})">${g}</g></svg>`;
+}
+const fmt=n=>n.toLocaleString("en-US");
+function render(city){
+  const c=D[city]||D["Calgary"];
+  document.getElementById("scenes").innerHTML=BIRDS.map(([name,col])=>{
+    const [n,cf]=c[name]||[0,0];
+    const lvl=!n?-1:cf?3:0;
+    const s1=!n?"not recorded within 50 km":cf?"nests here":"seen, never nesting";
+    const s2=!n?"":cf?`${fmt(cf)} of ${fmt(n)} sightings proved breeding · about 1 in ${Math.max(1,Math.round(n/cf))}`:`${fmt(n)} sighting${n>1?"s":""}, 0 nests, eggs or young`;
+    return `<div class="scene">${scene(lvl,col)}<div><b style="color:${col}">${name}</b><div class="s1">${s1}</div><div class="s2">${s2}</div></div></div>`;
+  }).join("");
+}
+const q=new URLSearchParams(location.search).get("city");
+render(q?decodeURIComponent(q).replace(/\+/g," "):"Calgary");
+</script>
+</body></html>
