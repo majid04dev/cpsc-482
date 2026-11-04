@@ -1,0 +1,28 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bird pills</title>
+<style>
+:root{--paper:#F6F1E7;--ink:#24211C}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--paper);overflow:hidden;font-family:"Work Sans","Helvetica Neue",Arial,sans-serif}
+#row{display:flex;height:100%;align-items:center}
+.cell{flex:1 1 0;display:flex;justify-content:center;padding:0 5px;min-width:0}
+.pill{width:100%;height:38px;border:1.5px solid var(--ink);border-radius:30px;background:transparent;color:var(--ink);
+  font:500 14px "Work Sans","Helvetica Neue",Arial,sans-serif;white-space:nowrap;display:grid;place-items:center;
+  transition:background .15s,color .15s;cursor:pointer}
+.pill.on{color:var(--paper);font-weight:600}
+</style></head><body><div id="row"></div>
+<script>
+const B=[["Canada Goose","#7B5A3A"],["Chickadee","#D9733B"],["Common Loon","#2E7D6B"],["Gray Jay","#4F64A8"],["Snowy Owl","#4FAFD8"]];
+const q=new URLSearchParams(location.search).get("bird");
+let cur=q;
+if(!cur){try{cur=localStorage.getItem("s5bird")}catch(e){}}
+if(!B.some(b=>b[0]===cur))cur="Common Loon";
+const row=document.getElementById("row");
+B.forEach(([n,c])=>{
+  const cell=document.createElement("div");cell.className="cell";
+  const p=document.createElement("div");p.className="pill"+(n===cur?" on":"");p.textContent=n;
+  p.style.borderColor=c;if(n===cur)p.style.background=c;
+  p.onclick=()=>{try{localStorage.setItem("s5bird",n)}catch(e){}};
+  cell.appendChild(p);row.appendChild(cell);
+});
+</script></body></html>
