@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Season card</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,800&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#F6F1E7;--ink:#24211C;--muted:#857D70;--line:#DDD4C3}
+*{box-sizing:border-box;margin:0}
+html,body{background:var(--paper);color:var(--ink);font-family:"Work Sans","Helvetica Neue",Arial,sans-serif}
+body{background-image:radial-gradient(#E9E1D0 1px,transparent 1.2px);background-size:14px 14px}
+.page{width:1200px;margin:0 auto;padding:22px 40px 18px}
+.chapter{display:flex;align-items:center;gap:12px;font:600 12px "Work Sans";letter-spacing:.2em;color:var(--muted);text-transform:uppercase}
+.chapter i{font-style:normal;background:var(--ink);color:var(--paper);border-radius:20px;padding:4px 14px;letter-spacing:.2em;font-weight:700}
+h1{font-family:"Fraunces",Georgia,serif;font-weight:800;letter-spacing:-.02em;line-height:1.04;font-size:46px;margin:12px 0 12px;max-width:1040px}
+h1 span{color:#4FAFD8}
+.pills{display:flex;gap:10px;margin-bottom:16px}
+.pill{border:1.5px solid var(--ink);background:transparent;border-radius:30px;padding:6px 15px;font:500 14px "Work Sans";cursor:pointer;color:var(--ink)}
+.pill.on{color:var(--paper)}
+.grid{display:grid;grid-template-columns:350px 470px 1fr;gap:14px;align-items:start}
+.panel h3{font:600 11.5px "Work Sans";letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+svg{display:block}
+.hint{font-size:12.5px;color:var(--muted);margin-top:4px}
+.hint b{color:var(--ink)}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;color:var(--muted);margin-top:6px}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+.ctl{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.play{width:44px;height:44px;border-radius:50%;border:0;background:var(--ink);cursor:pointer;display:grid;place-items:center}
+.play svg{width:16px;height:16px;fill:var(--paper)}
+.ctl small{font-size:12.5px;color:var(--muted)}
+.card{background:#fff;border:2px solid var(--ink);border-radius:22px;padding:14px 18px 14px;min-height:410px}
+.card .when{font-family:"Fraunces",Georgia,serif;font-weight:800;font-size:34px;text-align:center;letter-spacing:-.01em}
+.card .sc{display:grid;place-items:center;height:150px}
+.card .sc svg{width:230px;height:130px;overflow:visible}
+.card .t1{text-align:center;font-size:16.5px;margin-top:2px}
+.card .t2{text-align:center;font-size:13.5px;color:var(--muted);margin-top:3px}
+.card .cmp{margin-top:12px;border-top:1px dashed var(--line);padding-top:10px;font-size:13px}
+.card .cmp b{font-weight:700}
+.bar{display:flex;height:10px;border-radius:5px;overflow:hidden;margin:6px 0 4px;background:#EFE8DA}
+.bar i{display:block;height:100%}
+.note{font-size:12px;color:var(--muted);margin-top:8px;line-height:1.5}
+#tip{position:fixed;pointer-events:none;background:#14110D;color:#F6F1E7;font-size:12.5px;padding:8px 11px;border-radius:9px;opacity:0;transition:opacity .1s;z-index:9;line-height:1.45}
+.flying{animation:fly 3.2s linear infinite,flyo 3.2s linear infinite}
+@keyframes fly{0%{transform:translate(-40px,6px)}50%{transform:translate(10px,-6px)}100%{transform:translate(60px,4px)}}
+@keyframes flyo{0%,100%{opacity:0}15%,80%{opacity:1}}
+.bob{animation:bobb 1.6s ease-in-out infinite}
+@keyframes bobb{50%{transform:translateY(-3px)}}
+.note1{animation:nt 2s infinite}.note2{animation:nt 2s .7s infinite}
+@keyframes nt{0%{transform:translate(0,0);opacity:0}30%{opacity:1}100%{transform:translate(10px,-22px);opacity:0}}
+.heart{animation:hr 1.2s infinite;transform-box:fill-box;transform-origin:center}
+@keyframes hr{50%{transform:scale(1.25)}}
+</style>
+<style>body{background:#F6F1E7;background-image:none}.card{min-height:0;margin:2px}</style>
+<style>.ctl{display:flex;align-items:center;gap:10px;margin-top:10px;border-top:1px dashed #DDD4C3;padding-top:10px}
+#play{width:34px;height:34px;border-radius:50%;border:0;background:#24211C;cursor:pointer;display:grid;place-items:center;flex:none}
+#play svg{width:13px;height:13px;fill:#F6F1E7}
+#sl{flex:1;min-width:0}#ml{font-size:12px;color:#857D70;width:62px;text-align:right}</style>
+</head><body>
+<div class="card" id="card"></div>
+<script>
+const M=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
+MF=["January","February","March","April","May","June","July","August","September","October","November","December"];
+const COL={"Gray Jay":"#4F64A8","Chickadee":"#D9733B","Canada Goose":"#7B5A3A","Common Loon":"#2E7D6B","Snowy Owl":"#4FAFD8"};
+const DATA={"Gray Jay": [[30, 0, 1, 4], [34, 1, 0, 0], [37, 9, 4, 6], [36, 16, 13, 24], [160, 113, 66, 124], [222, 288, 57, 306], [44, 107, 30, 127], [21, 16, 4, 9], [18, 0, 0, 0], [38, 0, 0, 0], [45, 0, 0, 0], [25, 0, 0, 0]], "Chickadee": [[168, 5, 2, 7], [137, 4, 2, 5], [164, 14, 9, 13], [243, 43, 49, 124], [528, 317, 170, 161], [253, 593, 166, 224], [140, 299, 77, 154], [112, 54, 12, 23], [119, 3, 0, 0], [147, 0, 0, 0], [143, 0, 0, 1], [219, 0, 0, 0]], "Canada Goose": [[30, 2, 1, 9], [23, 3, 1, 6], [167, 10, 50, 24], [332, 47, 125, 158], [592, 173, 311, 466], [291, 179, 121, 398], [68, 49, 23, 146], [77, 24, 9, 21], [109, 7, 0, 0], [98, 9, 1, 1], [69, 2, 0, 0], [47, 0, 0, 0]], "Common Loon": [[1, 1, 5, 2], [0, 0, 0, 0], [10, 5, 3, 7], [87, 12, 23, 18], [253, 120, 106, 74], [225, 223, 162, 111], [53, 76, 54, 61], [22, 8, 3, 6], [5, 1, 0, 1], [19, 1, 0, 0], [3, 0, 0, 0], [1, 0, 0, 0]], "Snowy Owl": [[16, 0, 0, 0], [14, 0, 0, 0], [21, 0, 0, 0], [20, 0, 0, 0], [13, 0, 0, 0], [6, 0, 0, 0], [6, 0, 0, 0], [1, 0, 0, 0], [3, 0, 0, 0], [2, 0, 0, 0], [6, 0, 0, 0], [32, 0, 0, 0]]};
+const WORDS=["just seen (no sign of nesting)","singing in nesting habitat","in pairs or holding territory","nest, eggs or young found"];
+const sum=a=>a.reduce((x,y)=>x+y,0),fmt=n=>n.toLocaleString("en-US");
+const BIRD="M-16 4 C-16 -5 -9 -11 -1 -11 C2 -16 9 -16 11 -11 L17 -9 L11 -7 C12 1 7 8 -2 9 L-12 14 L-10 8 C-14 8 -16 6 -16 4 Z";
+const WING="M-16 2 C-10 -14 4 -20 12 -12 C2 -8 -6 -2 -16 2Z";
+const birdSVG=(c,s=1,x=0,y=0,flip=false)=>`<g transform="translate(${x},${y}) scale(${flip?-s:s},${s})"><path d="${BIRD}" fill="${c}"/><circle cx="6" cy="-10" r="1.6" fill="#F6F1E7"/></g>`;
+const flyerSVG=(c,s=1)=>`<g transform="scale(${s})"><path d="${BIRD}" fill="${c}"/><path d="${WING}" fill="${c}" opacity=".75"/><circle cx="6" cy="-10" r="1.6" fill="#F6F1E7"/></g>`;
+const branch=`<path d="M-50 22 Q0 16 50 24" stroke="#A88F6B" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+function scene(level,c,w=110,h=62){
+  const cx=w/2,cy=h/2+4;let g="";
+  if(level<0)g=`<ellipse cx="0" cy="12" rx="34" ry="10" fill="none" stroke="#BDB4A3" stroke-dasharray="4 4"/><text y="16" text-anchor="middle" font-size="10" fill="#857D70" font-family="Work Sans,Arial">no records</text>`;
+  if(level===0)g=`<g class="flying">${flyerSVG(c,1.05)}</g>`;
+  if(level===1)g=`${branch}<g class="bob">${birdSVG(c,1,0,8)}</g><text class="note1" x="16" y="-8" font-size="13" fill="${c}">♪</text><text class="note2" x="22" y="-2" font-size="11" fill="${c}">♫</text>`;
+  if(level===2)g=`${branch}${birdSVG(c,.9,-14,10)}${birdSVG(c,.9,14,10,true)}<path class="heart" d="M0 -12 c-3 -5 -9 -1 -5 3 l5 5 l5 -5 c4 -4 -2 -8 -5 -3z" fill="${c}"/>`;
+  if(level===3)g=`<path d="M-34 6 Q0 36 34 6 Z" fill="#C9B79A"/><path d="M-34 6 Q0 26 34 6" fill="none" stroke="#A88F6B" stroke-width="2"/>${[-12,0,12].map(x=>`<ellipse cx="${x}" cy="8" rx="6" ry="7.5" fill="${c}" opacity=".9"/>`).join("")}<g class="bob">${birdSVG(c,.85,20,-10)}</g>`;
+  return `<svg viewBox="0 0 ${w} ${h}"><g transform="translate(${cx},${cy})">${g}</g></svg>`;
+}
+
+
+const level=v=>{const n=sum(v);if(!n)return -1;for(const k of [3,2,1])if(v[k]/n>=.2)return k;return 0};
+const q=new URLSearchParams(location.search);
+let bird=q.get("bird"),mo=q.get("months");
+const ls=k=>{try{return localStorage.getItem(k)}catch(e){return null}},ss=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
+if(bird)ss("s5bird",bird);else bird=ls("s5bird")||"Common Loon";
+if(mo)ss("s5months",mo);else mo=ls("s5months")||"4,5,6,7";
+bird=decodeURIComponent(bird).replace(/\+/g," ");if(!COL[bird])bird="Common Loon";
+const nameToNum=n=>M.indexOf(String(n).trim().slice(0,3));
+let sel=[...new Set(decodeURIComponent(mo).split(/[,;|]/).map(x=>{x=x.trim();return /^\d+$/.test(x)?+x-1:nameToNum(x)}).filter(i=>i>=0&&i<12))].sort((a,b)=>a-b);
+if(!sel.length)sel=[3,4,5,6];
+const col=COL[bird],mev=DATA[bird];
+const cnt=mev.map(sum),mx=Math.max(...cnt),pk=cnt.indexOf(mx);
+const baseSel=sel.slice();
+document.getElementById("card").innerHTML=`<div id="body"></div><div class="ctl"><button id="play" aria-label="Play through the year"></button><input id="sl" type="range" min="0" max="11" step="1"><span id="ml"></span></div>`;
+function draw(sel){
+const ev=[0,0,0,0],rs=[0,0,0,0];
+mev.forEach((v,i)=>v.forEach((x,k)=>{(sel.includes(i)?ev:rs)[k]+=x}));
+const T=sum(ev),RT=sum(rs),whole=sel.length===12;
+const contiguous=sel[sel.length-1]-sel[0]+1===sel.length;
+const label=sel.length===1?MF[sel[0]]:whole?"Whole year":contiguous?`${M[sel[0]]} – ${M[sel[sel.length-1]]}`:sel.map(i=>M[i]).join(", ");
+const lv=level(ev);
+const line1=lv<0?`<b style="color:${col}">${bird}</b>: no records in this window`:`<b style="color:${col}">${bird}</b>: ${WORDS[lv]}`;
+const line2=lv<0?"":`${Math.round(ev[lv]/T*100)}% of ${fmt(T)} records`;
+let cmp;
+if(!whole){const w=T?Math.round(ev[3]/T*100):0,r=RT?Math.round(rs[3]/RT*100):0;
+  cmp=`<div class="cmp">Records showing a nest, eggs or young<br><b style="color:${col}">${w}%</b> in ${label} · <b>${r}%</b> in the rest of the year<div class="bar"><i style="width:${w}%;background:${col}"></i></div></div>`}
+else cmp=`<div class="cmp">Across the year, <b style="color:${col}">${T?Math.round(ev[3]/T*100):0}%</b> of ${bird} records show a nest, eggs or young.</div>`;
+
+document.getElementById("body").innerHTML=`<div class="when" style="font-size:${label.length>14?24:34}px">${label}</div><div class="sc">${scene(lv,col)}</div><div class="t1">${line1}</div><div class="t2">${line2}</div>${cmp}<div class="note">Busiest month: <b>${MF[pk]}</b> (${fmt(mx)} records).</div>`;
+
+}
+const PLAY='<svg viewBox="0 0 16 16"><path d="M3 1.5v13l11-6.5z"/></svg>',PAUSE='<svg viewBox="0 0 16 16"><path d="M3 1.5h3.5v13H3zM9.5 1.5H13v13H9.5z"/></svg>';
+const pb=document.getElementById("play"),sl=document.getElementById("sl"),ml=document.getElementById("ml");
+let timer=null,scrub=false;
+sl.style.accentColor=col;pb.innerHTML=PLAY;sl.value=baseSel[0];ml.textContent="selection";
+function backToSel(){scrub=false;sl.value=baseSel[0];ml.textContent="selection";draw(baseSel)}
+function stop(restore){if(timer){clearInterval(timer);timer=null}pb.innerHTML=PLAY;if(restore)backToSel()}
+function show(i){scrub=true;sl.value=i;ml.textContent=M[i];draw([i])}
+pb.onclick=()=>{if(timer){stop(false);return}
+  let i=scrub?+sl.value:-1;pb.innerHTML=PAUSE;
+  const step=()=>{i++;if(i>11){stop(true);return}show(i)};step();timer=setInterval(step,1100)};
+sl.oninput=()=>{stop(false);show(+sl.value)};
+ml.onclick=()=>{if(scrub){stop(false);backToSel()}};ml.style.cursor="pointer";
+draw(baseSel);
+</script></body></html>
